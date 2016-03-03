@@ -13,5 +13,9 @@ public class App
 		System.out.println("master changes!");
 	   	System.out.println("some changes!");
      }
+    
+    public static void print(){
+    	System.out.println("test");
+    }
 
 }
