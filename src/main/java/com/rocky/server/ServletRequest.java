@@ -1,7 +1,9 @@
+package com.rocky.server;
+
 class ServletRequest{
 	public ServletRequest(){};
 
-	public static String print(){
+	public static void print(){
 		System.out.println("This is ServReq!");
 	}
 }
