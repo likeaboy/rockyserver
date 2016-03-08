@@ -32,7 +32,6 @@ public class GenericServletResponse implements HttpServletResponse{
 	}
 
 	public ServletOutputStream getOutputStream() throws IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

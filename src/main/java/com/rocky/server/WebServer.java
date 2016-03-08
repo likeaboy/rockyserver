@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class WebServer {
 	public static void main(String[] args) {
 		Thread container = new Thread(new ServerContainer());
+		System.out.println("Server is starting...");
 		container.start();
 	}
 }

@@ -58,7 +58,7 @@ public class ServletDispather {
 	
 	private static HttpServletResponse doFindStaticResource(HttpServletRequest req){
 		GenericServletRequest request = (GenericServletRequest)req;
-		HttpServletResponse response = new GenericServletResponse(request.getSocket());
+		GenericServletResponse response = new GenericServletResponse(request.getSocket());
 		if(METHOD_GET.equals(request.getMethod())){
 			File file = new File(getResourceName(req.getContextPath()));
 			BufferedReader br = null;
@@ -67,18 +67,18 @@ public class ServletDispather {
 			try {
 				if(file.exists()){
 					br = new BufferedReader(new FileReader(file));
-					bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(),"UTF-8"));
+					bw = new BufferedWriter(new OutputStreamWriter(response.getSocket().getOutputStream(),"UTF-8"));
 					String line = br.readLine();
 					while(line!=null && !"".equals(line)){
 						bw.write(line);
 						line = br.readLine(); 
 					}
 					bw.flush();
-					response.getOutputStream().flush();
+					response.getSocket().getOutputStream().flush();
 				}else{
 					byte[] errorBs = "Server ERROR:404 NOT FOUND".getBytes();
-					response.getOutputStream().write(errorBs);
-					response.getOutputStream().flush();
+					response.getSocket().getOutputStream().write(errorBs);
+					response.getSocket().getOutputStream().flush();
 					
 				}
 			} catch (FileNotFoundException e) {
@@ -120,13 +120,15 @@ public class ServletDispather {
 		HttpServletResponse response = new GenericServletResponse(((GenericServletRequest)request).getSocket());
 		String contextPath = request.getContextPath();
 		String servletName = contextPath.split("/")[2];
-		String repository = CONTEXT_PATH + WEBROOT;
+//		String repository = CONTEXT_PATH + WEBROOT;
+		String repository = "";
+		File file = new File(repository);
 		try {
-			URL url = new URL(repository);
+			URL url = file.toURI().toURL();
 			URLClassLoader loader = new URLClassLoader(new URL[]{url});
-			Class servletClass = loader.loadClass("com.rocky.server.servlet.BlogServlet");
+			Class servletClass = loader.loadClass("com.rocky.server.servlet." + servletName);
 			BlogServlet bServlet = (BlogServlet)servletClass.newInstance();
-			bServlet.service(request, response);;
+			bServlet.service(request, response);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 public class ServerContainer implements Runnable{
 
 	public void run() {
+		System.out.println("Server is started...");
 		try {
 			ServerSocket serSocket = new ServerSocket(9999);
 			while(true){
@@ -26,6 +27,7 @@ public class ServerContainer implements Runnable{
 				int contentLength = 0;
 				ServletDispather.doDispather(req);
 //				Response response = findReource(req);
+				s.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
