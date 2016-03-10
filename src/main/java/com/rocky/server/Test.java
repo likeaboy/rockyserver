@@ -9,6 +9,8 @@ public class Test {
 			for(String kv : queryString.split("&")){
 				System.out.println(""+(kv.split("=")[0] +"|"+ kv.split("=")[1]));
 			}
+			
+			System.out.println(System.getProperty("user.dir"));
 		}
 	}
 }

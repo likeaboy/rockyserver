@@ -9,7 +9,7 @@ import javax.servlet.ServletRequest;
 
 import com.rocky.server.util.DebugUtil;
 
-public class ServletConnector implements Runnable{
+public class HttpConnector implements Runnable{
 	
 	private ServletProcessorStatck processors = new ServletProcessorStatck();
 	
@@ -25,11 +25,11 @@ public class ServletConnector implements Runnable{
 				Socket s = serSocket.accept();
 				
 //				ServletProcessor proccessor = new ServletProcessor(s);
-				ServletProcessor proccessor = processors.getProcessor(s);
+				HttpProcessor proccessor = processors.getProcessor(s);
 				if(proccessor == null)
 					DebugUtil.printLog("Do not process...");
 				else
-					proccessor.process(this);
+					proccessor.assign(s);
 			}
 		} catch (IOException e) {
 			DebugUtil.printLog("ServletConnector --> run");

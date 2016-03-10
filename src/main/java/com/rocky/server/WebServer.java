@@ -26,7 +26,7 @@ import com.rocky.server.util.DebugUtil;
  */
 public class WebServer {
 	public static void main(String[] args) {
-		Thread container = new Thread(new ServletConnector());
+		Thread container = new Thread(new HttpConnector());
 		DebugUtil.printLog("Server is starting...");
 		container.start();
 	}
