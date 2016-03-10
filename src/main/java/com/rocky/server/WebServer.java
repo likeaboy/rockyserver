@@ -17,10 +17,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import com.rocky.server.util.DebugUtil;
+
+/**
+ * bootstrap
+ * @author rocky
+ *
+ */
 public class WebServer {
 	public static void main(String[] args) {
-		Thread container = new Thread(new ServerContainer());
-		System.out.println("Server is starting...");
+		Thread container = new Thread(new ServletConnector());
+		DebugUtil.printLog("Server is starting...");
 		container.start();
 	}
 }

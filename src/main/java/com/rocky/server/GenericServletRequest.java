@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,6 +20,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.rocky.server.util.DebugUtil;
+
 public class GenericServletRequest implements HttpServletRequest{
 	
 	private InputStream is;
@@ -24,11 +29,26 @@ public class GenericServletRequest implements HttpServletRequest{
 	private String protocol;
 	private String method;
 	private String contextPath;
+	private String serverName;
+	private int port = 80;
+	private List<Cookie> cookies = new ArrayList<Cookie>();
+	private Map<String,Object> paramterMaps = new HashMap<String,Object>();
 	
-	public GenericServletRequest(Socket s) throws Exception{
+	public GenericServletRequest(Socket s){
+		DebugUtil.printLog("GenericServletRequest -- > socket=" + s);
 		this.s = s;
-		this.is = s.getInputStream();
-		doParse();
+		try {
+			this.is = s.getInputStream();
+		} catch (IOException e) {
+			DebugUtil.printLog("GenericServletRequest -- > is");
+			e.printStackTrace();
+		}
+		try {
+			doParse();
+		} catch (Exception e) {
+			DebugUtil.printLog("GenericServletRequest -- > doParse");
+			e.printStackTrace();
+		}
 	}
 	
 	private void doParse() throws Exception{
@@ -38,8 +58,41 @@ public class GenericServletRequest implements HttpServletRequest{
 		//GET /index.html HTTP/1.1
 		String[] lines = line.split("\\s+");
 		this.method = lines[0];
-		this.contextPath = lines[1];
+		String uri = lines[1];
 		this.protocol = lines[2];
+		boolean hasQuery = false;
+		int index = 0;
+		if((index = uri.indexOf("?")) > 0){
+			String queryString = uri.substring(index+1);
+			for(String kv : queryString.split("&")){
+				paramterMaps.put(kv.split("=")[0], kv.split("=")[1]);
+			}
+			hasQuery = true;
+		}
+		if(hasQuery)
+			this.contextPath = uri.substring(0, index);
+		else
+			this.contextPath = uri;
+		
+		while(!"".equals(line)){
+			//System.out.println(line);
+			line = reader.readLine();
+			if(line.startsWith("Host:")){
+				serverName = line.split("\\s")[1].split(":")[0];
+				String _port = line.split("\\s")[1].split(":")[1];
+				if(!"".equals(_port.trim())){
+					port = Integer.parseInt(_port);
+				}
+			}else if(line.startsWith("Cookie:")){
+				String cValues = line.split("\\s")[1];
+				for(String cValue : cValues.split(";")){
+					if(!"".equals(cValue.trim())){
+						//JSESSIONID=0EDF82341CE11DBE5AC7479627D4D652
+						cookies.add(new Cookie(cValue.split("=")[0], cValue.split("=")[1]));
+					}
+				}
+			}
+		}
 	}
 	
 	public Socket getSocket(){
@@ -83,23 +136,37 @@ public class GenericServletRequest implements HttpServletRequest{
 	}
 
 	public String getParameter(String name) {
-		// TODO Auto-generated method stub
+		Object object = paramterMaps.get(name);
+		if(object instanceof String){
+			return (String)object;
+		}else if (object instanceof String[]){
+			return ((String[])object)[0];
+		}else if (object instanceof List){
+			return (String)((List)object).get(0);
+		}
 		return null;
 	}
 
 	public Enumeration getParameterNames() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String[] getParameterValues(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Object obj = paramterMaps.get(name);
+		if(obj instanceof List){
+			return (String[])((List)obj).toArray();
+		}else if(obj == null){
+			return null;
+		}else if(obj instanceof String){
+			String[] s = new String[1];
+			s[0] = (String)obj;
+			return s;
+		}
+		return (String[])obj;
 	}
 
 	public Map getParameterMap() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.paramterMaps;
 	}
 
 	public String getProtocol() {
@@ -112,13 +179,11 @@ public class GenericServletRequest implements HttpServletRequest{
 	}
 
 	public String getServerName() {
-		// TODO Auto-generated method stub
-		return null;
+		return serverName;
 	}
 
 	public int getServerPort() {
-		// TODO Auto-generated method stub
-		return 0;
+		return port;
 	}
 
 	public BufferedReader getReader() throws IOException {
