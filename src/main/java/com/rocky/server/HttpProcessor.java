@@ -48,6 +48,7 @@ public class HttpProcessor implements Runnable{
 			}
 			
 			//解析response
+			response.setHeader("Server", "Rocky Servlet Container");
 			
 			this.connector.getProcessors().recycle(this);
 			DebugUtil.printLog("processor end...");

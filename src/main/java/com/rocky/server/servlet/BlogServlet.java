@@ -1,16 +1,20 @@
 package com.rocky.server.servlet;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 
 import com.rocky.server.GenericServletResponse;
 
-public class BlogServlet extends GenericServlet{
+public class BlogServlet extends HttpServlet{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1291866888742126591L;
 
 	@Override
 	public void service(ServletRequest req, ServletResponse res)
