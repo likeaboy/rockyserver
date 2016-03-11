@@ -11,7 +11,7 @@ import com.rocky.server.util.DebugUtil;
 
 public class HttpConnector implements Runnable{
 	
-	private ServletProcessorStatck processors = new ServletProcessorStatck();
+	private ServletProcessorStatck processors = new ServletProcessorStatck(this);
 	
 	public ServletProcessorStatck getProcessors(){
 		return processors;

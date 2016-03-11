@@ -55,6 +55,8 @@ public class GenericServletRequest implements HttpServletRequest{
 		BufferedReader reader
 		   = new BufferedReader(new InputStreamReader(is));
 		String line = reader.readLine();
+		if(line == null)
+			return;
 		//GET /index.html HTTP/1.1
 		String[] lines = line.split("\\s+");
 		this.method = lines[0];

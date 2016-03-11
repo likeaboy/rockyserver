@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.rocky.server.util.DebugUtil;
 
@@ -13,8 +15,8 @@ public class HttpProcessor implements Runnable{
 	private HttpConnector connector;
 	private boolean available = false;
 	
-	public HttpProcessor(Socket socket){
-		this.socket = socket;
+	public HttpProcessor(HttpConnector connector){
+		this.connector = connector;
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -29,19 +31,24 @@ public class HttpProcessor implements Runnable{
 	
 	
 	public void process(Socket socket){
-//		this.connector = connector;
-//		DebugUtil.printLog("process start...");
-//		DebugUtil.printLog("this process=" + this);
 		DebugUtil.printLog("ServletProcessor --> socket="+socket);
 		if(this.socket.isClosed()){
 			this.connector.getProcessors().recycle(this);
 			return;
 		}
 		try{
-			ServletRequest req = new GenericServletRequest(socket);
-			if(req == null)
-				System.out.println("=================thread="+Thread.currentThread().getName() + " processor=" + this);
-			ServletDispather.doDispather(req);
+			HttpServletRequest request = new GenericServletRequest(socket);
+//			ServletDispather.doDispather(req);
+			HttpServletResponse response = null;
+			String ctxPath = request.getContextPath();
+			if(ctxPath.startsWith("/servlet")){
+				response = ServletProcessor.findServletResource(request);
+			}else{
+				response = StaticResourceProcessor.doFindStaticResource(request);
+			}
+			
+			//解析response
+			
 			this.connector.getProcessors().recycle(this);
 			DebugUtil.printLog("processor end...");
 			try {

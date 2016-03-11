@@ -7,17 +7,19 @@ import com.rocky.server.util.DebugUtil;
 
 public class ServletProcessorStatck {
 	private Stack<HttpProcessor> processors = new Stack<HttpProcessor>();
-	private int max = 10;
 	private int curProcessors = 0;
 	private int minProcessors = 5;
 	private int maxProcessors = 20;
+	private HttpConnector connector;
 	
-	public ServletProcessorStatck(){
+	public ServletProcessorStatck(HttpConnector connector){
+		this.connector = connector;
 		init();
 	}
 	
-	public ServletProcessorStatck(int max){
-		this.max = max;
+	public ServletProcessorStatck(int minProcessors,int maxProcessors){
+		this.minProcessors = minProcessors;
+		this.maxProcessors = maxProcessors;
 		init();
 	}
 	
@@ -36,8 +38,7 @@ public class ServletProcessorStatck {
 	}	
 	
 	private HttpProcessor newProcessor(){
-		
-		return new HttpProcessor(null);
+		return new HttpProcessor(connector);
 	}
 	
 	

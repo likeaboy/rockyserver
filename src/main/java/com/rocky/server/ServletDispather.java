@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.rocky.server.servlet.BlogServlet;
 
+@Deprecated
 public class ServletDispather {
 	
 	private static final String METHOD_DELETE = "DELETE";
