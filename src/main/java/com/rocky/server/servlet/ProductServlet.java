@@ -24,13 +24,13 @@ public class ProductServlet extends HttpServlet{
 			throws ServletException, IOException {
 		String pid = req.getParameter("pid");
 		if(pid != null){
-			GenericServletResponse response = (GenericServletResponse)resp;
+			GenericServletResponse response = (GenericServletResponse)resp; 
 			response.getSocket().getOutputStream().write("<h1>".getBytes());
 			response.getSocket().getOutputStream().write("Production Info".getBytes());
 			response.getSocket().getOutputStream().write("</h1>".getBytes());
 			response.getSocket().getOutputStream().write("<table>".getBytes());
-			response.getSocket().getOutputStream().write("<th>ID</th><th>Name</th>".getBytes());
-			response.getSocket().getOutputStream().write(("<tr><td>" + pid + "</td><td>Big Dog</td>").getBytes());
+			response.getSocket().getOutputStream().write("<th>编号</th><th>名称</th>".getBytes());
+			response.getSocket().getOutputStream().write(("<tr><td>" + pid + "</td><td>热气球</td>").getBytes());
 			response.getSocket().getOutputStream().write("</table>".getBytes());
 		}
 	}

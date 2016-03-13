@@ -39,6 +39,12 @@ public class ServletProcessor {
 			URLClassLoader loader = new URLClassLoader(new URL[]{url});
 			Class servletClass = loader.loadClass("com.rocky.server.servlet." + servletName);
 			HttpServlet servlet = (HttpServlet)servletClass.newInstance();
+			
+			String responseHeader = "HTTP/1.1 200 \r\n" +
+			        "Content-Type: text/html;charset=UTF-8\r\n" +
+			        "\r\n";
+			output.write(responseHeader.getBytes());
+			
 			servlet.service(request, response);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
