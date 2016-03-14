@@ -8,7 +8,7 @@ import com.rocky.server.util.DebugUtil;
 public class ServletProcessorStatck {
 	private Stack<HttpProcessor> processors = new Stack<HttpProcessor>();
 	private int curProcessors = 0;
-	private int minProcessors = 5;
+	private int minProcessors = 10;
 	private int maxProcessors = 20;
 	private HttpConnector connector;
 	

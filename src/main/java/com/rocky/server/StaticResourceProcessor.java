@@ -19,6 +19,16 @@ public class StaticResourceProcessor {
 	public static HttpServletResponse doFindStaticResource(HttpServletRequest req){
 		GenericServletRequest request = (GenericServletRequest)req;
 		GenericServletResponse response = new GenericServletResponse(request.getSocket());
+		
+		String responseHeader = "HTTP/1.1 200 \r\n" +
+		        "Content-Type: text/html;charset=UTF-8\r\n" +
+		        "\r\n";
+		try {
+			response.getSocket().getOutputStream().write(responseHeader.getBytes());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 		if(Constants.METHOD_GET.equals(request.getMethod())){
 			File file = new File(getResourceName(req.getContextPath()));
 			BufferedReader br = null;
@@ -63,7 +73,7 @@ public class StaticResourceProcessor {
 					}
 				}
 //				try {
-//					response.getS().getOutputStream().close();
+//					response.getSocket().getOutputStream().close();
 //				} catch (IOException e) {
 //					e.printStackTrace();
 //				}
