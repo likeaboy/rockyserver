@@ -38,17 +38,20 @@ public class HttpProcessor implements Runnable{
 		}
 		try{
 			HttpServletRequest request = new GenericServletRequest(socket);
-//			ServletDispather.doDispather(req);
-			HttpServletResponse response = null;
+			GenericServletResponse response = new GenericServletResponse(((GenericServletRequest)request).getSocket());
+			response.setRequest(request);
 			String ctxPath = request.getContextPath();
 			if(ctxPath.startsWith("/servlet")){
-				response = ServletProcessor.findServletResource(request);
+				new ServletProcessor().process(request,response);
+				
+//				response = ServletProcessor.findServletResource(request);
 			}else{
-				response = StaticResourceProcessor.doFindStaticResource(request);
+				new StaticResourceProcessor().process(request, response);
+//				response = StaticResourceProcessor.doFindStaticResource(request);
 			}
 			
 			//解析response
-			response.setHeader("Server", "Rocky Servlet Container");
+//			response.setHeader("Server", "Rocky Servlet Container");
 			
 			this.connector.getProcessors().recycle(this);
 			DebugUtil.printLog("processor end...");
@@ -61,6 +64,7 @@ public class HttpProcessor implements Runnable{
 		}catch(Exception ee){
 			this.connector.getProcessors().recycle(this);
 			DebugUtil.printLog("processor end...");
+			ee.printStackTrace();
 		}
 	}
 	/**
